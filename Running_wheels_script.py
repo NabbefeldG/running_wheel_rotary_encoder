@@ -1,6 +1,7 @@
 from modules.Serial_functions import search_for_teensy_module, send_data_until_confirmation, wait_for_signal_byte
 from time import time, sleep
 from datetime import datetime
+import os
 import keyboard
 
 
@@ -20,8 +21,8 @@ if __name__ == "__main__":
     send_data_until_confirmation(serial_obj=serial_obj, header_byte=RESET_COUNTERS)
     sleep(0.01)  # A short delay until we requirest the first data points
 
-    Cnt = 0
-    with open("data" + datetime.today().strftime("%Y-%m-%d_%H-%M-%S") + ".txt", 'w') as txt_file:
+    os.makedirs("data", exist_ok=True)
+    with open(os.path.join("data", "data" + datetime.today().strftime("%Y-%m-%d_%H-%M-%S") + ".txt"), 'w') as txt_file:
         # Add header
         txt_file.write("Time in ms" + "Wheel1_cw_count" + "Wheel1_ccw_count" + "Wheel2_cw_count" + "Wheel2_ccw_count" + '\n')
 
@@ -29,7 +30,6 @@ if __name__ == "__main__":
             try:
                 # sleep(0.01)
                 send_data_until_confirmation(serial_obj=serial_obj, header_byte=DATA_REQUEST)
-                Cnt += 1
                 sleep(delay_between_data_requests_sec)
 
                 # read data from teensy
