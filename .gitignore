@@ -1,5 +1,8 @@
 # ignore this folder
-running_wheel_rotary_encoder\.idea\
+.idea\
+.idea
+\.idea\workspace.xml
+
 
 # also ignore the .png, .svg, .fig, .asv, .mat
 *.png
@@ -8,3 +11,4 @@ running_wheel_rotary_encoder\.idea\
 *.asv
 *.mat
 *.xml
+*.pyc
