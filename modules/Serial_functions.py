@@ -31,8 +31,8 @@ def read_module_name(serial_obj):
     serial_obj.read_all()  # flush Serial
     # print(serial_obj.inWaiting())
     _send_byte_alone(serial_obj=serial_obj, header_byte=255)
-    # print(serial_obj.inWaiting())
     sleep(0.1)
+    # print(serial_obj.inWaiting())
 
     # Read acknowledgement and firmware
     _ = serial_obj.read(size=5)
@@ -105,7 +105,9 @@ def send_data_until_confirmation(serial_obj, header_byte, data=None):
 
         received = False
         while time() - st < 0.2:
+            # input_byte = s.readline().decode().rstrip()
             if serial_obj.in_waiting:
+                # input_byte = serial_obj.read().decode().rstrip()
                 input_byte = int.from_bytes(serial_obj.read(size=1), byteorder='big')
 
                 if input_byte == 14:

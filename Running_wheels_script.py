@@ -12,6 +12,7 @@ RESET_COUNTERS = 2
 # Delay between Data requests in seconds. E.g.: 5 -> every five seconds
 delay_between_data_requests_sec = 5
 
+
 if __name__ == "__main__":
     # Init - initialize the teensy/esp32 connection and create the data file
     teensy_name = "rotary_encoder_esp32"
@@ -24,7 +25,7 @@ if __name__ == "__main__":
     os.makedirs("data", exist_ok=True)
     with open(os.path.join("data", "data" + datetime.today().strftime("%Y-%m-%d_%H-%M-%S") + ".txt"), 'w') as txt_file:
         # Add header
-        txt_file.write("Time in ms" + "Wheel1_cw_count" + "Wheel1_ccw_count" + "Wheel2_cw_count" + "Wheel2_ccw_count" + '\n')
+        txt_file.write("Time in ms;" + "Wheel1_cw_count;" + "Wheel1_ccw_count;" + "Wheel2_cw_count;" + "Wheel2_ccw_count" + '\n')
 
         while 1:
             try:
@@ -38,6 +39,7 @@ if __name__ == "__main__":
                 st = time()
                 while not received:
                     data_received = data_received + serial_obj.readline().decode()
+
                     if len(data_received) > 1:
                         if data_received[-2:] == '\r\n':
                             received = 1
@@ -49,7 +51,7 @@ if __name__ == "__main__":
                     # the experiment breaks at this point
                     if time() - st > 2:
                         print("Timeout")
-                        data_received = "Timeout:Timeout\r\n"
+                        data_received = "Header:Timeout\r\n"
                         received = 1
                     #
                 #
@@ -57,7 +59,7 @@ if __name__ == "__main__":
                 # 1. removes the linebreak chars: "\r\n"
                 # 2. splits at the ':'-char (which I just as padding in case I missed the first chars transmitted)
                 #    and leaves the data to be saved.
-                data_received = data_received[0:-2].spplit(":")[1]
+                data_received = data_received[0:-2].split(":")[1]
 
                 # Save data to file
                 # [ms-timestamp, cw counter, ccw counter)]
@@ -68,9 +70,10 @@ if __name__ == "__main__":
                 if keyboard.is_pressed("ESC"):
                     break
                 #
-            except:
-                # serial_obj.close()
-                break
+            except Exception as e:
+                print(e)
+                sleep(5)
+                # break
             #
         #
     #
