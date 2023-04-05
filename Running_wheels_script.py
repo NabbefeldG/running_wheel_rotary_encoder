@@ -8,24 +8,34 @@ import keyboard
 # Signals Bytes for communication with ESP32 Module
 DATA_REQUEST = 1
 RESET_COUNTERS = 2
+SET_FILE_NAME = 3
 
 # Delay between Data requests in seconds. E.g.: 5 -> every five seconds
 delay_between_data_requests_sec = 5
 
 
 if __name__ == "__main__":
+    # Generate the file name here since it's also send to the microcontroller
+    file_name = "data" + datetime.today().strftime("%Y-%m-%d_%H-%M-%S") + ".txt"
+
     # Init - initialize the teensy/esp32 connection and create the data file
     teensy_name = "rotary_encoder_esp32"
     serial_obj = search_for_teensy_module(teensy_name, baudrate=115200)
     sleep(0.01)  # Give it a second to get setup
     serial_obj.read_all()
+    send_data_until_confirmation(serial_obj=serial_obj, header_byte=SET_FILE_NAME)
+    serial_obj.write(file_name.encode())  # I didn't want to deal with all the message length handling stuff, cause this is the only input of that type and I know that its 27 chars
+    sleep(0.01)  # Give the controller time to generate the local file
     send_data_until_confirmation(serial_obj=serial_obj, header_byte=RESET_COUNTERS)
     sleep(0.01)  # A short delay until we requirest the first data points
 
+    print(file_name)
+
     os.makedirs("data", exist_ok=True)
-    with open(os.path.join("data", "data" + datetime.today().strftime("%Y-%m-%d_%H-%M-%S") + ".txt"), 'w') as txt_file:
+    with open(os.path.join("data", file_name), 'w') as txt_file:
         # Add header
-        txt_file.write("Time in ms;" + "Wheel1_cw_count;" + "Wheel1_ccw_count;" + "Wheel2_cw_count;" + "Wheel2_ccw_count" + '\n')
+        # txt_file.write("Time in ms;" + "Wheel1_cw_count;" + "Wheel1_ccw_count;" + "Wheel2_cw_count;" + "Wheel2_ccw_count" + '\n')
+        txt_file.write("Time in ms;Wheel1_cw_count;Wheel1_ccw_count;Wheel2_cw_count;Wheel2_ccw_count\n")
 
         while 1:
             try:
@@ -49,7 +59,7 @@ if __name__ == "__main__":
                     # This is a catch case that never happened while setting this up, but I wanted to make sure that
                     # there isn't any weird delay and this whole script stops working cause I never get the "\r\n" and
                     # the experiment breaks at this point
-                    if time() - st > 2:
+                    if time() - st > 5:
                         print("Timeout")
                         data_received = "Header:Timeout\r\n"
                         received = 1
