@@ -16,7 +16,7 @@ delay_between_data_requests_sec = 5
 
 if __name__ == "__main__":
     # Generate the file name here since it's also send to the microcontroller
-    file_name = "data" + datetime.today().strftime("%Y-%m-%d_%H-%M-%S") + ".txt"
+    file_name = "data_" + datetime.today().strftime("%Y-%m-%d_%H-%M-%S") + ".txt"
 
     # Init - initialize the teensy/esp32 connection and create the data file
     teensy_name = "rotary_encoder_esp32"
