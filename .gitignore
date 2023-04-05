@@ -1,0 +1,10 @@
+# ignore this folder
+running_wheel_rotary_encoder\.idea\
+
+# also ignore the .png, .svg, .fig, .asv, .mat
+*.png
+*.svg
+*.fig
+*.asv
+*.mat
+*.xml
