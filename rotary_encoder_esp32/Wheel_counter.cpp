@@ -15,14 +15,10 @@ Wheel_counter::Wheel_counter(byte PinA, byte PinB) {
   _direction = digitalRead(_pinB) != _state;  // Init direction according to the schema in Interrupt_call()
 }
 
-//void Wheel_counter::ReadCounters() {
-//  
-//}
-
 void Wheel_counter::_interrupt_call() {
   _state = digitalRead(_pinA); // Reads the "current" state of the outputA
   // If the previous and the current state of the outputA are different, that means a Pulse has occured
-  // This is an obsolete call since I made this an interrupt, bbut it also doesn't harm so I leave this condition ofr now
+  // This is an obsolete call since I made this an interrupt, but it also doesn't harm so I leave this condition of now
   if (_state != _lastState){
     // If the outputB state is different to the outputA state, that means the encoder is rotating clockwise
     if (digitalRead(_pinB) != _state) {
