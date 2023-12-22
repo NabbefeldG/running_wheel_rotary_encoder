@@ -45,6 +45,8 @@ void setup() {
   int Cnt = 0;
   while (SD.exists(file_name)) {
     Cnt += 1;
+    // Simply count up files names. It would be nice to have more elaborat file names, but this would require a rt-clock. 
+    // In an earlier version I used serial to communicate with the PC. I could just send the file name then, but when we switched to the SD card this became an issue.
     sprintf(file_name, "/data%06d.txt", Cnt);
   }
 
@@ -55,6 +57,7 @@ void setup() {
   if (!SD.exists(file_name)) {
     // This means that creating the file failed!
     while (1) {
+      // Make it clear that something is wrong!
       blink_LED_error();
     }
   }
@@ -67,7 +70,7 @@ void setup() {
 }
 
 void loop() {
-  // Send data to PC
+  // Log the current rotation counts every 5s. This was the resired temporal resolution for us, but can be changed if desired.  
   if (millis() - last_data_request >= 5000) {
     String msg = String(millis()) + ";" + String(wheel_counter1.cw_counter) + ";" + String(wheel_counter1.ccw_counter) + 
                                     ";" + String(wheel_counter2.cw_counter) + ";" + String(wheel_counter2.ccw_counter) + "\n";
@@ -75,16 +78,18 @@ void loop() {
     // save to SD card
     appendFile(SD, file_name, msg.c_str());
 
+    // Feedback for the user that data was logged, just in case
     digitalWrite(13, LOW);
     delay(500);
     digitalWrite(13, HIGH);
 
+    // reset timer
     last_data_request = millis();
   }
 }
 
 
-// FUNCTION FROM HERE ON: //
+// FUNCTIONS FROM HERE ON: //
 void writeFile(fs::FS &fs, const char * path, const char * message){
   File file = fs.open(path, FILE_WRITE);
   if(!file){
