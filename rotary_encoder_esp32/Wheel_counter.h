@@ -14,7 +14,7 @@ class Wheel_counter {
     // resets the counters for a new recording
     void reset_counters();
 
-    // Counters accessable from the outside. Either make them publich or make a read function. Not sure yet.
+    // I made the Counters accessible from the outside. The alternative would have been to make a read function.
     unsigned int cw_counter = 0;
     unsigned long ccw_counter = 0;
 
@@ -24,13 +24,10 @@ class Wheel_counter {
     byte _pinA;  // trigger count
     byte _pinB;  // ref. signal
   private:
-  
     // state vars
     bool _state = 0;
     bool _lastState = 0;
     bool _direction = 0;
-  // private:
-    // None apparently
 };
 
 #endif
