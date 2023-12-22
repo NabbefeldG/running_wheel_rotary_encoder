@@ -6,6 +6,8 @@
 *.mat
 *.xml
 *.pyc
+*.zip
 
 # also ignore this PyCharm folder
 *\.idea
+*\data
